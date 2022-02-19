@@ -1,25 +1,34 @@
-#Uses python3
+# Uses python3
 
 import sys
-import queue
+from heapq import heappush, heappop
 
-
-def distance(adj, cost, s, t):
-    #write your code here
-    return -1
-
-
+INF = float('inf')
 if __name__ == '__main__':
-    input = sys.stdin.read()
-    data = list(map(int, input.split()))
-    n, m = data[0:2]
-    data = data[2:]
-    edges = list(zip(zip(data[0:(3 * m):3], data[1:(3 * m):3]), data[2:(3 * m):3]))
-    data = data[3 * m:]
-    adj = [[] for _ in range(n)]
-    cost = [[] for _ in range(n)]
-    for ((a, b), w) in edges:
-        adj[a - 1].append(b - 1)
-        cost[a - 1].append(w)
-    s, t = data[0] - 1, data[1] - 1
-    print(distance(adj, cost, s, t))
+
+    V, E = map(int, input().split(" "))
+    AL = [[] for u in range(V)]
+    for _ in range(E):
+        u, v, w = map(int, input().split(" "))
+        AL[u-1].append((v-1, w))
+
+    dist = [INF for u in range(V)]
+    s, t = map(int, input().split(" "))
+    s = s-1
+    t = t-1
+
+    dist[s] = 0
+    pq = []
+    heappush(pq, (0, s))
+
+    while len(pq) > 0:
+        d, u = heappop(pq)
+        if d > dist[u]:
+            continue
+        for v, w in AL[u]:
+            if dist[u] + w >= dist[v]:
+                continue
+            dist[v] = dist[u] + w
+            heappush(pq, (dist[v], v))
+
+    print( -1 if dist[t] == INF else dist[t])

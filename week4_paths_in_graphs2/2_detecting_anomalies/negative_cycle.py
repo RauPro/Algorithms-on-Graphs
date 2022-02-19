@@ -1,10 +1,30 @@
-#Uses python3
-
 import sys
 
 
 def negative_cycle(adj, cost):
-    #write your code here
+    longest = []
+    for item in cost:
+        longest.extend(item)
+
+    dist = [sum(longest) + 1 for i in adj]
+    prev = [-1 for i in adj]
+
+    dist[0] = 0
+
+    def relax(u, v, i):
+        if dist[v] > dist[u] + cost[u][i]:
+            dist[v] = dist[u] + cost[u][i]
+            prev[v] = u
+            return 1
+        return 0
+
+    for i in range(len(adj)):
+        for s, item in enumerate(adj):
+            for index, t in enumerate(item):
+                r = relax(s, t, index)
+                if r == 1 and i == len(adj) - 1:
+                    return 1
+
     return 0
 
 

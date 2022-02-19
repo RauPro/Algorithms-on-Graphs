@@ -1,30 +1,48 @@
-#include <iostream>
-#include <vector>
-#include <queue>
+#include <bits/stdc++.h>
+
 
 using std::vector;
 using std::queue;
 using std::pair;
 using std::priority_queue;
-
-long long distance(vector<vector<int> > &adj, vector<vector<int> > &cost, int s, int t) {
-  //write your code her
-  return -1;
-}
+using namespace std;
+typedef long long ll;
+typedef pair<ll, ll> ii;
+typedef vector<ll> vi;
+typedef vector<ii> vii;
+const ll INF = LONG_MAX; // INF = 1B, not 2^31-1 to avoid overflow
 
 int main() {
-  int n, m;
-  std::cin >> n >> m;
-  vector<vector<int> > adj(n, vector<int>());
-  vector<vector<int> > cost(n, vector<int>());
-  for (int i = 0; i < m; i++) {
-    int x, y, w;
-    std::cin >> x >> y >> w;
-    adj[x - 1].push_back(y - 1);
-    cost[x - 1].push_back(w);
+  ll V, E;
+  std::cin >> V >> E;
+  vector<vii> AL(V, vii());
+  while (E--)  {
+    ll u, v,w; cin>>u>>v>>w;
+    AL[u-1].emplace_back(v-1,w);
   }
-  int s, t;
-  std::cin >> s >> t;
-  s--, t--;
-  std::cout << distance(adj, cost, s, t);
+  ll s, t;cin>>s>>t;
+  t--;s--;
+  vi dist(V, INF); dist[s] = 0;
+  set<ii> pq;
+  for (size_t u = 0; u < V; u++){
+    pq.insert({dist[u], u});
+  }
+  while (!pq.empty())
+  {
+    pair<ll, ll> edge = *pq.begin();
+    ll d = edge.first;
+    ll u =  edge.second;
+    pq.erase(pq.begin());
+    for (auto &edgePair: AL[u]){
+      ll v = edgePair.first;
+      ll w = edgePair.second;
+      if(dist[u]+w >= dist[v])continue;
+      pq.erase(pq.find({dist[v], v}));
+      dist[v] =  dist[u]+w;
+      pq.insert({dist[v], v});
+      //cout<< dist[v] << " " << v<<endl;
+    }
+    
+  }
+  cout<<dist[t]<<endl;
 }

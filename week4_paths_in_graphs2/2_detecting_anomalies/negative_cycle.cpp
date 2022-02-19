@@ -1,23 +1,56 @@
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
+
 
 using std::vector;
+using std::queue;
+using std::pair;
+using std::priority_queue;
+using namespace std;
+const int INF = 1e9; // INF = 1B, not 2^31-1 to avoid overflow
 
-int negative_cycle(vector<vector<int> > &adj, vector<vector<int> > &cost) {
-  //write your code here
-  return 0;
-}
+typedef pair<int, int> ii;
+typedef vector<int> vi;
+typedef vector<ii> vii;
+
 
 int main() {
-  int n, m;
-  std::cin >> n >> m;
-  vector<vector<int> > adj(n, vector<int>());
-  vector<vector<int> > cost(n, vector<int>());
-  for (int i = 0; i < m; i++) {
-    int x, y, w;
-    std::cin >> x >> y >> w;
-    adj[x - 1].push_back(y - 1);
-    cost[x - 1].push_back(w);
+  int V, E;cin>>V>>E;
+  vector<vii> AL(V, vii());
+  while (E--){
+    int u, v, w;cin>>u >>v>>w;
+    AL[u-1].emplace_back(v-1,w);
   }
-  std::cout << negative_cycle(adj, cost);
+  vi dist(V, INF); dist[0]=0;
+  for (size_t i = 0; i < V-1; i++)
+  {
+    bool modified = false;
+    for (int u;u<V;u++){
+      if (dist[u] != INF){
+        for (auto &edgePair: AL[u]){
+          int v = edgePair.first;
+          int w = edgePair.second;
+          if(dist[u]+w >= dist[v])continue;
+          dist[v] = dist[v]+w;
+          modified = true;
+        }
+      }
+    }
+    if(modified){
+      break;
+    }
+  }
+  bool negativeCycle = false;
+  for (size_t u = 0; u < V; u++)
+  {
+    if(dist[u]!=INF){
+      for (auto &edgePair: AL[u]){
+          int v = edgePair.first;
+          int w = edgePair.second;
+          if(dist[v] > dist[u]+w)negativeCycle = true;
+        }
+    }
+  }
+  cout<< negativeCycle <<endl;
+  
+  
 }
